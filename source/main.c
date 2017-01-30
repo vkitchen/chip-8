@@ -26,10 +26,12 @@ void Chip8Interpreter()
 			switch (opcode) {
 				case 0x00E0:
 					//clear screen
+					printf("Clearing screen \n");
 					pc += 2;
 				break;
 				case 0x00EE:
 					//return from subroutine
+					printf("Finished subroutine \n");
 					pc += 2;
 			break;
 			} 
@@ -44,7 +46,7 @@ void Chip8Interpreter()
 
 			//call subroutine code here
 			pc = opcode & 0x0FFF; //program counter jumps to remaining 3 digits of the opcode
-			printf("jumping to: %#04x \n", opcode & 0x0FFF);
+			printf("Calling subroutine at: %#04x \n", opcode & 0x0FFF);
 			break;
 
 		case 0x3000: //3XNN, Cond, if(Vx==NN)	Skips the next instruction if VX equals NN. (Usually the next instruction is a jump to skip a code block)
@@ -106,15 +108,24 @@ void Chip8Interpreter()
 
 				case 0x0004: //8XY4, Math, Vx += Vy	Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't.
 					V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 4];
-					if (1) { //"if there's a carry"?
-						V[0x10] = 1;
+					if ((((int)V[(opcode & 0x0F00) >> 8] + (int)V[(opcode & 0x00F0) >> 4]) < 255)) { //idk whats happening here had to cheat
+						V[0xF] = 0;
 					} else {
-						V[0x10] = 0;
+						V[0xF] = 1;
 					}
+
+					V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 4];
 					pc += 2;
 					break;
 
 				case 0x0005: //8XY5, Math, Vx -= Vy	VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
+					if (((int)V[(opcode & 0x0F00) >> 8] < (int)V[(opcode & 0x00F0) >> 4])) { //idk should this be < or <=, same with the few below
+						V[0xF] = 1;
+					} else {
+						V[0xF] = 0;
+					}
+
+					V[(opcode & 0x0F00) >> 8] -= V[(opcode & 0x00F0) >> 4];
 					pc += 2;
 					break;
 
@@ -123,6 +134,13 @@ void Chip8Interpreter()
 					break;
 
 				case 0x0007: //8XY7, Math, Vx=Vy-Vx	Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
+					if ((int)V[(opcode & 0x0F00) >> 8] < (int)V[(opcode & 0x00F0) >> 4]) { 
+						V[0xF] = 1;
+					} else {
+						V[0xF] = 0;
+					}
+
+					V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4] - V[(opcode & 0x0F00) >> 8];
 					pc += 2;
 					break;
 
@@ -150,6 +168,7 @@ void Chip8Interpreter()
 			break;
 
 		case 0xC000: //CXNN, Rand, Vx=rand()&NN	Sets VX to the result of a bitwise and operation on a random number (Typically: 0 to 255) and NN.
+			V[opcode & 0x0F00] = rand() & (opcode & 0x00FF);
 			pc += 2;
 			break;
 
