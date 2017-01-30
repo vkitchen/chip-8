@@ -31,12 +31,3 @@
 # Debug files
 *.dSYM/
 *.su
-
-ipch/*
-*.suo
-*.user
-*.ncb
-*.sbr
-*.log
-*.tlog
-

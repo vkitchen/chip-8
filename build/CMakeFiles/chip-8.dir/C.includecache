@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/tim/Desktop/chip-8-master/source/main.c
+stdio.h
+-
+stdlib.h
+-
+sys/io.h
+-
+main.h
+/home/tim/Desktop/chip-8-master/source/main.h
+
+/home/tim/Desktop/chip-8-master/source/main.h
+
