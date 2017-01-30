@@ -37,10 +37,14 @@ void Chip8Interpreter()
 
 		case 0x1000: //1NNN,	Flow, goto NNN, Jumps to address NNN.
 			pc = opcode & 0x0FFF; //program counter jumps to remaining 3 digits of the opcode
+			printf("jumping to: %#04x \n", opcode & 0x0FFF);
 			break;
 
 		case 0x2000: //2NNN, Flow, *(0xNNN)()	Calls subroutine at NNN.
-			
+
+			//call subroutine code here
+			pc = opcode & 0x0FFF; //program counter jumps to remaining 3 digits of the opcode
+			printf("jumping to: %#04x \n", opcode & 0x0FFF);
 			break;
 
 		case 0x3000: //3XNN, Cond, if(Vx==NN)	Skips the next instruction if VX equals NN. (Usually the next instruction is a jump to skip a code block)
@@ -69,12 +73,12 @@ void Chip8Interpreter()
 			break;
 
 		case 0x6000: //6XNN, Const, Vx = NN	Sets VX to NN.
-			V[(opcode & 0x0F00) >> 8] = (opcode & 0x00FF) >> 8;
+			V[(opcode & 0x0F00) >> 8] = opcode & 0x00FF;
 			pc += 2;
 			break;
 
 		case 0x7000: //7XNN, Const, Vx += NN	Adds NN to VX.
-			V[(opcode & 0x0F00) >> 8] += (opcode & 0x00FF) >> 8;
+			V[(opcode & 0x0F00) >> 8] += opcode & 0x00FF;
 			pc += 2;
 			break;
 
@@ -86,22 +90,22 @@ void Chip8Interpreter()
 					break;
 
 				case 0x0001: //8XY1, BitOp, Vx=Vx|Vy	Sets VX to VX or VY. (Bitwise OR operation)
-					V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] | V[(opcode & 0x00F0) >> 8];
+					V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] | V[(opcode & 0x00F0) >> 4];
 					pc += 2;
 					break;
 
 				case 0x0002: //8XY2, BitOp, Vx=Vx&Vy	Sets VX to VX and VY. (Bitwise AND operation)
-					V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] & V[(opcode & 0x00F0) >> 8];
+					V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] & V[(opcode & 0x00F0) >> 4];
 					pc += 2;
 					break;
 
 				case 0x0003: //8XY3, BitOp, Vx=Vx^Vy	Sets VX to VX xor VY.
-					V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] ^ V[(opcode & 0x00F0) >> 8];
+					V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] ^ V[(opcode & 0x00F0) >> 4];
 					pc += 2;
 					break;
 
 				case 0x0004: //8XY4, Math, Vx += Vy	Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't.
-					V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 8];
+					V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 4];
 					if (1) { //"if there's a carry"?
 						V[0x10] = 1;
 					} else {
@@ -129,7 +133,7 @@ void Chip8Interpreter()
 			break;
 
 		case 0x9000: //9XY0, Cond, if(Vx!=Vy)	Skips the next instruction if VX doesn't equal VY. (Usually the next instruction is a jump to skip a code block)
-			if (V[(opcode & 0x0F00) >> 8] != V[(opcode & 0x00F0) >> 8]) {
+			if (V[(opcode & 0x0F00) >> 8] != V[(opcode & 0x00F0) >> 4]) {
 				pc += 4;
 			} else {
 				pc += 2;
@@ -137,12 +141,12 @@ void Chip8Interpreter()
 			break;
 
 		case 0xA000: //ANNN, MEM, I = NNN	Sets I to the address NNN.
-			I = (opcode & 0x0FFF) >> 8;
+			I = opcode & 0x0FFF;
 			pc += 2;
 			break;
 
 		case 0xB000: //BNNN, Flow, PC=V0+NNN	Jumps to the address NNN plus V0.
-			pc = ((opcode & 0x0FFF) >> 8) + V[0];
+			pc = (opcode & 0x0FFF) + V[0x00];
 			break;
 
 		case 0xC000: //CXNN, Rand, Vx=rand()&NN	Sets VX to the result of a bitwise and operation on a random number (Typically: 0 to 255) and NN.
