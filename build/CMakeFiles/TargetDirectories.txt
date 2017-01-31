@@ -1,8 +1,0 @@
-/home/tim/Desktop/chip-8-master/build/CMakeFiles/edit_cache.dir
-/home/tim/Desktop/chip-8-master/build/CMakeFiles/CHIP8lib.dir
-/home/tim/Desktop/chip-8-master/build/CMakeFiles/chip-8.dir
-/home/tim/Desktop/chip-8-master/build/CMakeFiles/unittest.dir
-/home/tim/Desktop/chip-8-master/build/CMakeFiles/rebuild_cache.dir
-/home/tim/Desktop/chip-8-master/build/external/CMakeFiles/edit_cache.dir
-/home/tim/Desktop/chip-8-master/build/external/CMakeFiles/rebuild_cache.dir
-/home/tim/Desktop/chip-8-master/build/external/CMakeFiles/unity.dir

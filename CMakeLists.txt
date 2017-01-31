@@ -37,5 +37,7 @@ target_link_libraries(chip-8 CHIP8lib)
 #
 # Build unit tests
 #
-add_executable(unittest tests/main.c)
-target_link_libraries(unittest unity CHIP8lib)
+if(UNIX)
+	add_executable(unittest tests/main.c)
+	target_link_libraries(unittest unity CHIP8lib)
+endif()

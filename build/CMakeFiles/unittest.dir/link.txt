@@ -1,1 +1,0 @@
-/usr/bin/cc  -g   CMakeFiles/unittest.dir/tests/main.c.o  -o unittest -rdynamic external/libunity.a libCHIP8lib.a 
