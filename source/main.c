@@ -7,15 +7,25 @@
 #include <stdlib.h>
 
 
-#if defined(WIN32)
-#include <io.h>
+#ifdef WIN32
+	#include <io.h>
 #else
-#include <sys/io.h>
+	#include <sys/io.h>
 #endif
 
-#include "main.h"
+unsigned short opcode; //currently processed opcode
+unsigned char memory[4096]; //wam size
+unsigned short pc; //program counter
+unsigned short pc2; //previous program counter, used to check if the program begins looping
+unsigned int OpsProcessed; //counts how many opcodes have been processed
+unsigned char V[0x10]; //All 16 registers, V0 to VF, 8 bit
+unsigned short I; //Adress register, 16 bit
+int running = 1;
+FILE *rom;
+int file_size;
 
-
+const char *usage = "\
+chip-8 [FILE]\n";
 
 void Chip8Interpreter()
 {
@@ -34,7 +44,7 @@ void Chip8Interpreter()
 					printf("Finished subroutine \n");
 					pc += 2;
 			break;
-			} 
+			}
 		break;
 
 		case 0x1000: //1NNN,	Flow, goto NNN, Jumps to address NNN.
@@ -134,7 +144,7 @@ void Chip8Interpreter()
 					break;
 
 				case 0x0007: //8XY7, Math, Vx=Vy-Vx	Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
-					if ((int)V[(opcode & 0x0F00) >> 8] < (int)V[(opcode & 0x00F0) >> 4]) { 
+					if ((int)V[(opcode & 0x0F00) >> 8] < (int)V[(opcode & 0x00F0) >> 4]) {
 						V[0xF] = 1;
 					} else {
 						V[0xF] = 0;
@@ -244,20 +254,20 @@ int main(int argc, char **argv)
 	//open the rom we're working with
 	rom = fopen(argv[1], "rb");
 
-	//get the size of the rom 
-	file_size = ftell(rom); 
+	//get the size of the rom
+	file_size = ftell(rom);
 
 	//print name of the rom (useless)
-	printf("File: %s\n", argv[1]); 
+	printf("File: %s\n", argv[1]);
 
 	pc = 0x200; //apparently this is where the program counter should start
 
 	//dump the rom data into the memory array, then close the file
-	fread(memory + 0x200, 1, 4096 - 0x200, rom); 
+	fread(memory + 0x200, 1, 4096 - 0x200, rom);
 	fclose(rom);
 
 	while (running) {
-		//Get and decode opcode 
+		//Get and decode opcode
 		opcode = memory[pc] << 8 | memory[pc + 1];
 		printf("Executing %#04x at %04X \n", opcode, pc);
 
