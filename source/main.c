@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 #ifdef WIN32
 	#include <io.h>
 #else
@@ -280,8 +279,6 @@ int main(int argc, char **argv)
 			printf("PC Frozen, Number of Opcodes processed: %d\n", OpsProcessed);
 			running = 0;
 		}
-
-		if (pc >= 4096) running = 0; //if program counter reaches end of file for whatever reason (like this emulator is not finished) then stop
 	}
 	return 0;
 }
