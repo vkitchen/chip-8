@@ -1,7 +1,6 @@
-# chip-8-disassembler
-Disassembler for the CHIP-8 bytecode
+# Chip 8 Emulator
 
-## Build Instructions
+## Build Instructions for Linux
 
 Dependencies are CMake and Doxygen
 
@@ -22,3 +21,10 @@ either `rm -R build` or `git clean -fdx`
 ### To generate docs
 
 In project root run `doxygen`
+
+## Build instructions for Windows
+
+Requires Visual 14 2015
+
+1. Open Chip8.sln
+2. Right click on chip-8 from solution explorer and choose "Rebuild"

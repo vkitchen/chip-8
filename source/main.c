@@ -5,7 +5,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
+
+#if defined(WIN32)
+#include <io.h>
+#else
 #include <sys/io.h>
+#endif
+
 #include "main.h"
 
 void Chip8Interpreter()

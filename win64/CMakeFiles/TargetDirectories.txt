@@ -1,0 +1,6 @@
+D:/Tim/Documents/GitHub/chip-8/win64/CMakeFiles/CHIP8lib.dir
+D:/Tim/Documents/GitHub/chip-8/win64/CMakeFiles/chip-8.dir
+D:/Tim/Documents/GitHub/chip-8/win64/CMakeFiles/unittest.dir
+D:/Tim/Documents/GitHub/chip-8/win64/CMakeFiles/ALL_BUILD.dir
+D:/Tim/Documents/GitHub/chip-8/win64/CMakeFiles/ZERO_CHECK.dir
+D:/Tim/Documents/GitHub/chip-8/win64/external/CMakeFiles/unity.dir
