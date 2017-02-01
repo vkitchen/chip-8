@@ -37,7 +37,7 @@ void interpreter()
 
 		case 0x1000: //1NNN,	Flow, goto NNN, Jumps to address NNN.
 			pc = opcode & 0x0FFF; //program counter jumps to remaining 3 digits of the opcode
-			printf("Jumping to: %#04x", opcode & 0x0FFF);
+			printf("Jumping to: %#04x", pc);
 			break;
 
 		case 0x2000: //2NNN, Flow, *(0xNNN)()	Calls subroutine at NNN.			
@@ -151,19 +151,22 @@ void interpreter()
 
 		case 0xA000: //ANNN, MEM, I = NNN	Sets I to the address NNN.
 			I = opcode & 0x0FFF;
+			printf("Setting I register to: %#04x", I);
 			pc += 2;
 			break;
 
 		case 0xB000: //BNNN, Flow, PC=V0+NNN	Jumps to the address NNN plus V0.
 			pc = (opcode & 0x0FFF) + V[0x00];
+			printf("Jumping to: %#04x", pc);
 			break;
 
 		case 0xC000: //CXNN, Rand, Vx=rand()&NN	Sets VX to the result of a bitwise and operation on a random number (Typically: 0 to 255) and NN.
-			V[opcode & 0x0F00] = rand() & (opcode & 0x00FF);
+			V[(opcode & 0x0F00) >> 8] = rand() & (opcode & 0x00FF);
 			pc += 2;
 			break;
 
 		case 0xD000: //DXYN, Disp, draw(Vx,Vy,N)	Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a height of N pixels. Each row of 8 pixels is read as bit-coded starting from memory location I; I value doesn�t change after the execution of this instruction. As described above, VF is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that doesn�t happen
+			printf("Draw sprite at (%d, %d) Height: %d", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4, opcode & 0x000F);
 			pc += 2;
 			break;
 
@@ -188,6 +191,7 @@ void interpreter()
 					break;
 
 				case 0x000A: //FX0A, KeyOp, Vx = get_key()	A key press is awaited, and then stored in VX. (Blocking Operation. All instruction halted until next key event)
+					printf("Get user input");
 					pc += 2;
 					break;
 

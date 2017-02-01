@@ -15,6 +15,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #ifdef WIN32
 	#include <io.h>
 #else
@@ -48,6 +49,9 @@ int main(int argc, char **argv)
 
 	pc = 0x200; //apparently this is where the program counter should start
 
+	//set random number seed
+	srand(time(0));
+
 	//dump the rom data into the memory array, then close the file
 	fread(memory + 0x200, 1, 4096 - 0x200, rom);
 	fclose(rom);
@@ -55,6 +59,7 @@ int main(int argc, char **argv)
 	while (running)
 		{
 		//Get and decode opcode
+			
 		opcode = memory[pc] << 8 | memory[pc + 1];
 		printf("\n || PC: %#04x OP: %04X SP: %d || ", pc, opcode, sp);
 
