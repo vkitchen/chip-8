@@ -123,6 +123,8 @@ void interpreter()
 					break;
 
 				case 0x0006: //8XY6, BitOp, Vx >> 1	Shifts VX right by one. VF is set to the value of the least significant bit of VX before the shift.
+					//half done
+					V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] >> 1;
 					pc += 2;
 					break;
 
@@ -137,6 +139,8 @@ void interpreter()
 					break;
 
 				case 0x000E: //8XYE, BitOp, Vx << 1	Shifts VX left by one. VF is set to the value of the most significant bit of VX before the shift.
+					//half done
+					V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] << 1;
 					pc += 2;
 					break;
 				}
@@ -217,10 +221,14 @@ void interpreter()
 					break;
 
 				case 0x0055: //FX55, MEM, reg_dump(Vx,&I)	Stores V0 to VX (including VX) in memory starting at address I.
+					for (int i = 0; i <= ((opcode & 0x0F00) >> 8); i++)
+						memory[I + i] = V[i];
 					pc += 2;
 					break;
 
 				case 0x0065: //FX65, MEM, reg_load(Vx,&I)	Fills V0 to VX (including VX) with values from memory starting at address I
+					for (int i = 0; i <= ((opcode & 0x0F00) >> 8); i++)
+						V[i] = memory[I + i];
 					pc += 2;
 					break;
 				}
