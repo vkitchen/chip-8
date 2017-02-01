@@ -22,9 +22,8 @@ void interpreter()
 		case 0x0000:
 			switch (opcode)
 				{
-				case 0x00E0:
-					//clear screen
-					printf("Clearing screen \n");
+				case 0x00E0: //clear screen
+					printf("Clearing screen");
 					pc += 2;
 					break;
 				case 0x00EE: //return from subroutine				
@@ -38,14 +37,14 @@ void interpreter()
 
 		case 0x1000: //1NNN,	Flow, goto NNN, Jumps to address NNN.
 			pc = opcode & 0x0FFF; //program counter jumps to remaining 3 digits of the opcode
-			printf("jumping to: %#04x \n", opcode & 0x0FFF);
+			printf("Jumping to: %#04x", opcode & 0x0FFF);
 			break;
 
 		case 0x2000: //2NNN, Flow, *(0xNNN)()	Calls subroutine at NNN.			
 			stack[sp] = pc; //saves the position of the pc before jumping to a subroutine
 			sp++; //Increment depth of subroutine
 			pc = opcode & 0x0FFF; //program counter jumps to remaining 3 digits of the opcode
-			printf("Calling subroutine at: %#04x \n", opcode & 0x0FFF);
+			printf("Calling subroutine at: %#04x", opcode & 0x0FFF);
 			break;
 
 		case 0x3000: //3XNN, Cond, if(Vx==NN)	Skips the next instruction if VX equals NN. (Usually the next instruction is a jump to skip a code block)
