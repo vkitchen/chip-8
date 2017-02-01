@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 		{
 		//Get and decode opcode
 		opcode = memory[pc] << 8 | memory[pc + 1];
-		printf("Executing %#04x at %04X \n", opcode, pc);
+		printf("\n || PC: %#04x OP: %04X SP: %d || ", pc, opcode, sp);
 
 		//execute opcode
 		pc2 = pc;
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 
 		if (pc == pc2)
 			{
-			printf("PC Frozen, Number of Opcodes processed: %d\n", OpsProcessed);
+			printf("\nPC Frozen, Number of Opcodes processed: %d", OpsProcessed);
 			running = 0;
 			}
 		}
