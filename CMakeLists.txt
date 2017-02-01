@@ -35,6 +35,12 @@ add_executable(chip-8 source/main.c)
 target_link_libraries(chip-8 CHIP8lib)
 
 #
+# Build the SDL test program
+#
+add_executable(sdltest source/sdltest.c)
+target_link_libraries(sdltest -lSDL2)
+
+#
 # Build unit tests
 #
 if(UNIX)
