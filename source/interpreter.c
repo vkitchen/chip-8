@@ -15,6 +15,7 @@
 */
 void interpreter()
 	{
+		
 	//credit to wikipedia for opcode descriptions
 	switch (opcode & 0xF000) //(bitwise AND operation) trims the last 3 values of the opcode, (eg. case 0x1000 gets called with 0x1225)
 		{
@@ -26,10 +27,11 @@ void interpreter()
 					printf("Clearing screen \n");
 					pc += 2;
 					break;
-				case 0x00EE:
-					//return from subroutine
-					printf("Finished subroutine \n");
-					pc += 2;
+				case 0x00EE: //return from subroutine				
+					sp--; //go one layer up
+					pc = stack[sp]; //go back to the original pc position, this will be the original subroutine call
+					pc += 2; //so we skip that
+					printf("Finished subroutine, jumping to: %#04x", pc);
 					break;
 				}
 			break;
@@ -39,9 +41,9 @@ void interpreter()
 			printf("jumping to: %#04x \n", opcode & 0x0FFF);
 			break;
 
-		case 0x2000: //2NNN, Flow, *(0xNNN)()	Calls subroutine at NNN.
-
-					 //call subroutine code here
+		case 0x2000: //2NNN, Flow, *(0xNNN)()	Calls subroutine at NNN.			
+			stack[sp] = pc; //saves the position of the pc before jumping to a subroutine
+			sp++; //Increment depth of subroutine
 			pc = opcode & 0x0FFF; //program counter jumps to remaining 3 digits of the opcode
 			printf("Calling subroutine at: %#04x \n", opcode & 0x0FFF);
 			break;
