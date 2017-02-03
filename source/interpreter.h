@@ -23,6 +23,10 @@ unsigned char V[0x10]; //All 16 registers, V0 to VF, 8 bit
 unsigned short stack[0x10]; //16 stack, used for subroutines, capable of 16 nested subroutines
 unsigned short sp; //stack pointer, or how many layers deep in a subroutine
 
+//both timers decrement by 1 at 60hz when greater than 0
+unsigned char delay_timer; 
+unsigned char sound_timer;
+
 unsigned short I; //Adress register, 16 bit
 
 /*

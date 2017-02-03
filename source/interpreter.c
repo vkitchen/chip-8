@@ -191,6 +191,7 @@ void interpreter()
 			switch (opcode & 0x00FF)
 				{
 				case 0x0007: //FX07, Timer, Vx = get_delay()	Sets VX to the value of the delay timer.
+					V[(opcode & 0x0F00) >> 8] = delay_timer;
 					pc += 2;
 					break;
 
@@ -200,10 +201,12 @@ void interpreter()
 					break;
 
 				case 0x0015: //FX15, Timer, delay_timer(Vx)	Sets the delay timer to VX.
+					delay_timer = (opcode & 0x0F00) >> 8;
 					pc += 2;
 					break;
 
 				case 0x0018: //FX18, Sound, sound_timer(Vx)	Sets the sound timer to VX.
+					sound_timer = (opcode & 0x0F00) >> 8;
 					pc += 2;
 					break;
 
@@ -234,4 +237,9 @@ void interpreter()
 				}
 			break;
 		}
-	}
+	
+		if (sound_timer > 0) //when greater than 0, the buzzer is on
+			sound_timer--;
+		if (delay_timer > 0)
+			delay_timer--;
+}
