@@ -10,6 +10,18 @@
 #include "interpreter.h"
 
 /*
+UPDATETIMERS
+-------------
+*/
+void updatetimers()
+	{
+		if (sound_timer > 0) //when greater than 0, the buzzer is on
+			sound_timer--;
+		if (delay_timer > 0)
+			delay_timer--;
+}
+
+/*
 	INTERPRETER()
 	-------------
 */
@@ -23,28 +35,28 @@ void interpreter()
 			switch (opcode)
 				{
 				case 0x00E0: //clear screen
-					printf("Clearing screen");
+					//printf("Clearing screen");
 					pc += 2;
 					break;
 				case 0x00EE: //return from subroutine				
 					sp--; //go one layer up
 					pc = stack[sp]; //go back to the original pc position, this will be the original subroutine call
 					pc += 2; //so we skip that
-					printf("Finished subroutine, jumping to: %#04x", pc);
+					//printf("Finished subroutine, jumping to: %#04x", pc);
 					break;
 				}
 			break;
 
 		case 0x1000: //1NNN,	Flow, goto NNN, Jumps to address NNN.
 			pc = opcode & 0x0FFF; //program counter jumps to remaining 3 digits of the opcode
-			printf("Jumping to: %#04x", pc);
+			//printf("Jumping to: %#04x", pc);
 			break;
 
 		case 0x2000: //2NNN, Flow, *(0xNNN)()	Calls subroutine at NNN.			
 			stack[sp] = pc; //saves the position of the pc before jumping to a subroutine
 			sp++; //Increment depth of subroutine
 			pc = opcode & 0x0FFF; //program counter jumps to remaining 3 digits of the opcode
-			printf("Calling subroutine at: %#04x", opcode & 0x0FFF);
+			//printf("Calling subroutine at: %#04x", opcode & 0x0FFF);
 			break;
 
 		case 0x3000: //3XNN, Cond, if(Vx==NN)	Skips the next instruction if VX equals NN. (Usually the next instruction is a jump to skip a code block)
@@ -155,13 +167,13 @@ void interpreter()
 
 		case 0xA000: //ANNN, MEM, I = NNN	Sets I to the address NNN.
 			I = opcode & 0x0FFF;
-			printf("Setting I register to: %#04x", I);
+			//printf("Setting I register to: %#04x", I);
 			pc += 2;
 			break;
 
 		case 0xB000: //BNNN, Flow, PC=V0+NNN	Jumps to the address NNN plus V0.
 			pc = (opcode & 0x0FFF) + V[0x00];
-			printf("Jumping to: %#04x", pc);
+			//printf("Jumping to: %#04x", pc);
 			break;
 
 		case 0xC000: //CXNN, Rand, Vx=rand()&NN	Sets VX to the result of a bitwise and operation on a random number (Typically: 0 to 255) and NN.
@@ -170,7 +182,7 @@ void interpreter()
 			break;
 
 		case 0xD000: //DXYN, Disp, draw(Vx,Vy,N)	Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a height of N pixels. Each row of 8 pixels is read as bit-coded starting from memory location I; I value doesn�t change after the execution of this instruction. As described above, VF is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that doesn�t happen
-			printf("Draw sprite at (%d, %d) Height: %d", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4, opcode & 0x000F);
+			//printf("Draw sprite at (%d, %d) Height: %d", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4, opcode & 0x000F);
 			pc += 2;
 			break;
 
@@ -191,19 +203,21 @@ void interpreter()
 			switch (opcode & 0x00FF)
 				{
 				case 0x0007: //FX07, Timer, Vx = get_delay()	Sets VX to the value of the delay timer.
+					V[(opcode & 0x0F00) >> 8] = delay_timer;
 					pc += 2;
 					break;
 
 				case 0x000A: //FX0A, KeyOp, Vx = get_key()	A key press is awaited, and then stored in VX. (Blocking Operation. All instruction halted until next key event)
-					printf("Get user input");
 					pc += 2;
 					break;
 
 				case 0x0015: //FX15, Timer, delay_timer(Vx)	Sets the delay timer to VX.
+					delay_timer = (opcode & 0x0F00) >> 8;
 					pc += 2;
 					break;
 
 				case 0x0018: //FX18, Sound, sound_timer(Vx)	Sets the sound timer to VX.
+					sound_timer = (opcode & 0x0F00) >> 8;
 					pc += 2;
 					break;
 
@@ -234,4 +248,4 @@ void interpreter()
 				}
 			break;
 		}
-	}
+}

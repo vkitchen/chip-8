@@ -21,16 +21,40 @@
 #else
 	#include <sys/io.h>
 #endif
+
 #include "interpreter.h"
 
 const char *usage = "\
 chip-8 [FILE]\n";
 
+void errordump() {
+	printf("\nPC: %#04x ", pc);
+	printf("\nOP: %04X", opcode);
+	printf("\nSP: %d", sp);
+	printf("\n\nDelay timer: %ds", delay_timer);
+	printf("\nOpcodes processed: %d", OpsProcessed);
+}
+
+void errorcheck() {
+	if (pc == pc2)
+	{
+		printf("\n\nERROR: Pointer counter frozen\n");
+		errordump();
+		running = 0;
+	}
+
+	if (sp > 16) {
+		printf("\n\nERROR: Stack pointer overflow\n");
+		errordump();
+		running = 0;
+	}
+}
+
 int main(int argc, char **argv)
 	{
 	FILE *rom;
 	int file_size;
-	int running = 1;
+	running = 1;
 
 	if (argc != 2)
 		{
@@ -45,7 +69,7 @@ int main(int argc, char **argv)
 	file_size = ftell(rom);
 
 	//print name of the rom (useless)
-	printf("File: %s\n", argv[1]);
+	printf("\nFile: %s\n", argv[1]);
 
 	pc = 0x200; //apparently this is where the program counter should start
 
@@ -56,22 +80,29 @@ int main(int argc, char **argv)
 	fread(memory + 0x200, 1, 4096 - 0x200, rom);
 	fclose(rom);
 
+	printf("\nCPU clock running at: %d Khz", (cyclesperframe * 60) / 1024);
+
 	while (running)
 		{
 		//Get and decode opcode
-			
 		opcode = memory[pc] << 8 | memory[pc + 1];
-		printf("\n || PC: %#04x OP: %04X SP: %d || ", pc, opcode, sp);
+
+		//printf("\n || PC: %#04x OP: %04X SP: %d DT: %d || ", pc, opcode, sp, delay_timer);
 
 		//execute opcode
 		pc2 = pc;
 		interpreter();
-		OpsProcessed++;
 
-		if (pc == pc2)
+		cyclesSLF++;
+		OpsProcessed++;
+		errorcheck();
+
+		//update screen
+		if (cyclesSLF >= cyclesperframe)
 			{
-			printf("\nPC Frozen, Number of Opcodes processed: %d", OpsProcessed);
-			running = 0;
+				updatetimers(); //these timers should be called at 60hz
+				cyclesSLF = 0; //reset cycles since last frame
+				//insert some function for updating screen here
 			}
 		}
 	return 0;
