@@ -10,6 +10,18 @@
 #include "interpreter.h"
 
 /*
+UPDATETIMERS
+-------------
+*/
+void updatetimers()
+	{
+		if (sound_timer > 0) //when greater than 0, the buzzer is on
+			sound_timer--;
+		if (delay_timer > 0)
+			delay_timer--;
+}
+
+/*
 	INTERPRETER()
 	-------------
 */
@@ -237,9 +249,4 @@ void interpreter()
 				}
 			break;
 		}
-	
-		if (sound_timer > 0) //when greater than 0, the buzzer is on
-			sound_timer--;
-		if (delay_timer > 0)
-			delay_timer--;
 }

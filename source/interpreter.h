@@ -13,6 +13,7 @@
 
 #ifndef INTERPRETER_H_
 #define INTERPRETER_H_
+#define cyclesperframe 512
 
 unsigned short opcode; //currently processed opcode
 unsigned char memory[4096]; //wam size
@@ -23,11 +24,16 @@ unsigned char V[0x10]; //All 16 registers, V0 to VF, 8 bit
 unsigned short stack[0x10]; //16 stack, used for subroutines, capable of 16 nested subroutines
 unsigned short sp; //stack pointer, or how many layers deep in a subroutine
 
+unsigned int running;
+
 //both timers decrement by 1 at 60hz when greater than 0
 unsigned char delay_timer; 
 unsigned char sound_timer;
 
 unsigned short I; //Adress register, 16 bit
+
+//This is a counter for how many cycles have passed since the last screen update
+unsigned int cyclesSLF; //cycles since last frame
 
 /*
 	INTERPRETER()
