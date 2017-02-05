@@ -69,7 +69,7 @@ int main(int argc, char **argv)
 	file_size = ftell(rom);
 
 	//print name of the rom (useless)
-	printf("File: %s\n", argv[1]);
+	printf("\nFile: %s\n", argv[1]);
 
 	pc = 0x200; //apparently this is where the program counter should start
 
@@ -80,13 +80,14 @@ int main(int argc, char **argv)
 	fread(memory + 0x200, 1, 4096 - 0x200, rom);
 	fclose(rom);
 
+	printf("\nCPU clock running at: %d Khz", (cyclesperframe * 60) / 1024);
 
 	while (running)
 		{
 		//Get and decode opcode
 		opcode = memory[pc] << 8 | memory[pc + 1];
-		printf("\n || PC: %#04x OP: %04X SP: %d || ", pc, opcode, sp);
 
+		//printf("\n || PC: %#04x OP: %04X SP: %d DT: %d || ", pc, opcode, sp, delay_timer);
 
 		//execute opcode
 		pc2 = pc;
