@@ -115,8 +115,7 @@ void interpreter(struct renderer *r)
 					break;
 
 				case 0x0004: //8XY4, Math, Vx += Vy	Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't.
-					V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 4];
-					if ((((int)V[(opcode & 0x0F00) >> 8] + (int)V[(opcode & 0x00F0) >> 4]) < 255)) //idk whats happening here had to cheat
+					if (((V[(opcode & 0x0F00) >> 8] + V[(opcode & 0x00F0) >> 4]) < 255))
 						V[0xF] = 0;
 					else
 						V[0xF] = 1;
@@ -126,7 +125,7 @@ void interpreter(struct renderer *r)
 					break;
 
 				case 0x0005: //8XY5, Math, Vx -= Vy	VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
-					if (((int)V[(opcode & 0x0F00) >> 8] < (int)V[(opcode & 0x00F0) >> 4])) //idk should this be < or <=, same with the few below
+					if ((V[(opcode & 0x0F00) >> 8] < V[(opcode & 0x00F0) >> 4])) //if VY < VX
 						V[0xF] = 1;
 					else
 						V[0xF] = 0;
@@ -136,13 +135,13 @@ void interpreter(struct renderer *r)
 					break;
 
 				case 0x0006: //8XY6, BitOp, Vx >> 1	Shifts VX right by one. VF is set to the value of the least significant bit of VX before the shift.
-					//half done
+					V[0xF] = V[(opcode & 0x0F00) >> 8] & 0x1;
 					V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] >> 1;
 					pc += 2;
 					break;
 
 				case 0x0007: //8XY7, Math, Vx=Vy-Vx	Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
-					if ((int)V[(opcode & 0x0F00) >> 8] < (int)V[(opcode & 0x00F0) >> 4])
+					if (V[(opcode & 0x0F00) >> 8] < V[(opcode & 0x00F0) >> 4]) //if VY < VX
 						V[0xF] = 1;
 					else
 						V[0xF] = 0;
@@ -152,7 +151,7 @@ void interpreter(struct renderer *r)
 					break;
 
 				case 0x000E: //8XYE, BitOp, Vx << 1	Shifts VX left by one. VF is set to the value of the most significant bit of VX before the shift.
-					//half done
+					V[0xF] = V[(opcode & 0x0F00) >> 8] >> 7;
 					V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] << 1;
 					pc += 2;
 					break;

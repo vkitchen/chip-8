@@ -24,7 +24,7 @@ unsigned short pc; //program counter
 unsigned short pc2; //previous program counter, used to check if the program begins looping
 unsigned int OpsProcessed; //counts how many opcodes have been processed
 unsigned char V[0x10]; //All 16 registers, V0 to VF, 8 bit
-unsigned short stack[0x10]; //16 stack, used for subroutines, capable of 16 nested subroutines
+unsigned char stack[0x10]; //16 stack, used for subroutines, capable of 16 nested subroutines
 unsigned short sp; //stack pointer, or how many layers deep in a subroutine
 
 unsigned int running;
