@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "render.h"
+#include <time.h>
 
 #ifdef WIN32
 	#include <io.h>
@@ -104,7 +105,7 @@ int main(int argc, char **argv)
 		//update screen
 		if (cyclesSLF >= cyclesperframe)
 			{
-
+				framesSLS++;
 				updatetimers(); //these timers should be called at 60hz
 				frame_count++;
 				cyclesSLF = 0; //reset cycles since last frame
@@ -118,6 +119,19 @@ int main(int argc, char **argv)
 
 				//Update the screen
 				SDL_RenderPresent(r->ren);
+
+				if (t != (unsigned)time(NULL)) //if 1 second has passed
+				{
+					if(framesSLS == 60)
+						printf("\x1B[32m");
+					else
+						printf("\x1B[33m");
+
+					printf("\033[7;15H FPS: %d", framesSLS);
+					printf("\x1B[0m");
+					framesSLS = 0;
+				}
+				t = (unsigned)time(NULL);
 			}
 		}
 
