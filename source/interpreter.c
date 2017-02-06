@@ -114,7 +114,7 @@ void interpreter()
 					break;
 
 				case 0x0004: //8XY4, Math, Vx += Vy	Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't.
-					if ((((int)V[(opcode & 0x0F00) >> 8] + (int)V[(opcode & 0x00F0) >> 4]) < 255))
+					if (((V[(opcode & 0x0F00) >> 8] + V[(opcode & 0x00F0) >> 4]) < 255))
 						V[0xF] = 0;
 					else
 						V[0xF] = 1;
