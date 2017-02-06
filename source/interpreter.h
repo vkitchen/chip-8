@@ -16,7 +16,7 @@
 
 #include "render.h"
 
-#define cyclesperframe 16
+#define cyclesperframe 64
 
 unsigned short opcode; //currently processed opcode
 unsigned char memory[4096]; //wam size

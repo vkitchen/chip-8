@@ -104,6 +104,7 @@ int main(int argc, char **argv)
 		//update screen
 		if (cyclesSLF >= cyclesperframe)
 			{
+
 				updatetimers(); //these timers should be called at 60hz
 				frame_count++;
 				cyclesSLF = 0; //reset cycles since last frame
@@ -111,6 +112,12 @@ int main(int argc, char **argv)
 				printf("\033[8;0HDraw calls per frame: %d", draw_calls);
 				draw_calls = 0;
 				//insert some function for updating screen here
+
+				//First clear the renderer
+				SDL_RenderClear(r->ren);
+
+				//Update the screen
+				SDL_RenderPresent(r->ren);
 			}
 		}
 

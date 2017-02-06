@@ -97,12 +97,8 @@ void render_draw(struct renderer *r, char x, char y, char *sprite, char length)
 		return;
 		}
 
-	//First clear the renderer
-	SDL_RenderClear(r->ren);
 	//Draw the texture
 	SDL_RenderCopy(r->ren, tex, NULL, NULL);
-	//Update the screen
-	SDL_RenderPresent(r->ren);
 
 	SDL_DestroyTexture(tex);
 	}
