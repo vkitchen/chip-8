@@ -84,7 +84,9 @@ void render_draw(struct renderer *r, char x, char y, char *sprite, char length)
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(r->ren, surface);
 
 	SDL_FreeSurface(surface);
-	printf("Draw sprite at %d %d\n", x, y);
+  printf("\033[6;0HDraw sprite at %d %d\n", x, y);
+  draw_calls++;
+	//printf("Draw sprite at %d %d\n", x, y);
 
 	if (tex == NULL)
 		{

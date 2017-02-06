@@ -30,23 +30,21 @@ const char *usage = "\
 chip-8 [FILE]\n";
 
 void errordump() {
-	printf("\nPC: %#04x ", pc);
-	printf("\nOP: %04X", opcode);
-	printf("\nSP: %d", sp);
-	printf("\n\nDelay timer: %ds", delay_timer);
-	printf("\nOpcodes processed: %d", OpsProcessed);
+	printf("\n\033[11;0HPC: %#04x OP: %04X SP: %d DT: %d", pc, opcode, sp, delay_timer);
+	printf("\n\nOpcodes processed: %d\n", OpsProcessed);
+
 }
 
 void errorcheck() {
 	if (pc == pc2)
 	{
-		printf("\n\nERROR: Pointer counter frozen\n");
+		printf("\033[10;0HERROR: Pointer counter frozen\n");
 		errordump();
 		running = 0;
 	}
 
 	if (sp > 0xF) {
-		printf("\n\nERROR: Stack pointer overflow\n");
+		printf("\033[10;0HERROR: Stack pointer overflow\n");
 		errordump();
 		running = 0;
 	}
@@ -70,6 +68,9 @@ int main(int argc, char **argv)
 	//get the size of the rom
 	file_size = ftell(rom);
 
+	//clear the screen
+	printf("\033[2J\033[1;1H"); //TODO: only works on linux
+
 	//print name of the rom (useless)
 	printf("\nFile: %s\n", argv[1]);
 
@@ -83,6 +84,7 @@ int main(int argc, char **argv)
 	fclose(rom);
 
 	printf("\nCPU clock running at: %d Khz", (cyclesperframe * 60) / 1024);
+	printf("\033[7;0HFrame: 0");
 
 	struct renderer *r = render_new();
 
@@ -90,8 +92,6 @@ int main(int argc, char **argv)
 		{
 		//Get and decode opcode
 		opcode = memory[pc] << 8 | memory[pc + 1];
-
-		//printf("\n || PC: %#04x OP: %04X SP: %d DT: %d || ", pc, opcode, sp, delay_timer);
 
 		//execute opcode
 		pc2 = pc;
@@ -105,7 +105,11 @@ int main(int argc, char **argv)
 		if (cyclesSLF >= cyclesperframe)
 			{
 				updatetimers(); //these timers should be called at 60hz
+				frame_count++;
 				cyclesSLF = 0; //reset cycles since last frame
+				printf("\033[7;0HFrame: %d", frame_count);
+				printf("\033[8;0HDraw calls per frame: %d", draw_calls);
+				draw_calls = 0;
 				//insert some function for updating screen here
 			}
 		}

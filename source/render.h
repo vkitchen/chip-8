@@ -26,4 +26,7 @@ struct renderer
 struct renderer *render_new();
 void render_draw(struct renderer *r, char x, char y, char *sprite, char length);
 
+unsigned int frame_count; //total number of frames rendered
+unsigned int draw_calls; //total amount of objects begin rendered during that frame
+
 #endif
