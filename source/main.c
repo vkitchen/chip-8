@@ -15,6 +15,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "render.h"
 
 #ifdef WIN32
@@ -108,5 +109,9 @@ int main(int argc, char **argv)
 				//insert some function for updating screen here
 			}
 		}
+
+	render_free(r);
+
+	sleep(2); /* TODO remove, should programs stay open when execution stops? */
 	return 0;
 	}

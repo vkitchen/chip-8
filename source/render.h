@@ -18,7 +18,9 @@
 
 struct renderer
 	{
+	SDL_Window *win;
 	SDL_Renderer *ren;
+	char screen[2048]; //!< We actually only need one bit per pixel but chars are easier to deal with.
 	};
 
 struct renderer *render_new();
