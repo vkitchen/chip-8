@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "interpreter.h"
+#include "render.h"
 
 /*
 UPDATETIMERS
@@ -25,9 +26,9 @@ void updatetimers()
 	INTERPRETER()
 	-------------
 */
-void interpreter()
+void interpreter(struct renderer *r)
 	{
-		
+
 	//credit to wikipedia for opcode descriptions
 	switch (opcode & 0xF000) //(bitwise AND operation) trims the last 3 values of the opcode, (eg. case 0x1000 gets called with 0x1225)
 		{
@@ -38,7 +39,7 @@ void interpreter()
 					//printf("Clearing screen");
 					pc += 2;
 					break;
-				case 0x00EE: //return from subroutine				
+				case 0x00EE: //return from subroutine
 					sp--; //go one layer up
 					pc = stack[sp]; //go back to the original pc position, this will be the original subroutine call
 					pc += 2; //so we skip that
@@ -52,7 +53,7 @@ void interpreter()
 			//printf("Jumping to: %#04x", pc);
 			break;
 
-		case 0x2000: //2NNN, Flow, *(0xNNN)()	Calls subroutine at NNN.			
+		case 0x2000: //2NNN, Flow, *(0xNNN)()	Calls subroutine at NNN.
 			stack[sp] = pc; //saves the position of the pc before jumping to a subroutine
 			sp++; //Increment depth of subroutine
 			pc = opcode & 0x0FFF; //program counter jumps to remaining 3 digits of the opcode
@@ -183,6 +184,7 @@ void interpreter()
 
 		case 0xD000: //DXYN, Disp, draw(Vx,Vy,N)	Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a height of N pixels. Each row of 8 pixels is read as bit-coded starting from memory location I; I value doesn�t change after the execution of this instruction. As described above, VF is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that doesn�t happen
 			//printf("Draw sprite at (%d, %d) Height: %d", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4, opcode & 0x000F);
+			render_draw(r, V[opcode & 0x0F00 >> 8], V[opcode & 0x00f0 >> 8], &memory[I], opcode & 0x000F);
 			pc += 2;
 			break;
 

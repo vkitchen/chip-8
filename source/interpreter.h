@@ -13,6 +13,9 @@
 
 #ifndef INTERPRETER_H_
 #define INTERPRETER_H_
+
+#include "render.h"
+
 #define cyclesperframe 512
 
 unsigned short opcode; //currently processed opcode
@@ -27,7 +30,7 @@ unsigned short sp; //stack pointer, or how many layers deep in a subroutine
 unsigned int running;
 
 //both timers decrement by 1 at 60hz when greater than 0
-unsigned char delay_timer; 
+unsigned char delay_timer;
 unsigned char sound_timer;
 
 unsigned short I; //Adress register, 16 bit
@@ -39,6 +42,6 @@ unsigned int cyclesSLF; //cycles since last frame
 	INTERPRETER()
 	-------------
 */
-void interpreter();
+void interpreter(struct renderer *r);
 
 #endif

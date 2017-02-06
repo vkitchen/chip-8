@@ -15,6 +15,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "render.h"
 
 #ifdef WIN32
 	#include <io.h>
@@ -82,6 +83,8 @@ int main(int argc, char **argv)
 
 	printf("\nCPU clock running at: %d Khz", (cyclesperframe * 60) / 1024);
 
+	struct renderer *r = render_new();
+
 	while (running)
 		{
 		//Get and decode opcode
@@ -91,7 +94,7 @@ int main(int argc, char **argv)
 
 		//execute opcode
 		pc2 = pc;
-		interpreter();
+		interpreter(r);
 
 		cyclesSLF++;
 		OpsProcessed++;

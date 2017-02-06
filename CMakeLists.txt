@@ -17,6 +17,7 @@ set(CMAKE_CONFIGURATION_TYPES Debug)
 set(CHIP8_FILES
 	source/interpreter.c
 	source/memory.c
+	source/render.c
 	source/string2.c
 	)
 
@@ -32,13 +33,13 @@ add_subdirectory(external)
 include_directories(source)
 
 add_executable(chip-8 source/main.c)
-target_link_libraries(chip-8 CHIP8lib)
+target_link_libraries(chip-8 CHIP8lib -lSDL2)
 
 #
 # Build the SDL test program
 #
-# add_executable(sdltest source/sdltest.c)
-# target_link_libraries(sdltest -lSDL2)
+add_executable(sdltest source/sdltest.c)
+target_link_libraries(sdltest -lSDL2)
 
 #
 # Build unit tests

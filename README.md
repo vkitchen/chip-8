@@ -14,7 +14,7 @@ In project root run
 4. make
 5. ./chip-8
 
-### To build (Windows)
+### To build (Windows) BROKEN
 
 Requires Visual 14 2015
 
