@@ -43,7 +43,7 @@ void errorcheck() {
 		running = 0;
 	}
 
-	if (sp > 16) {
+	if (sp > 0xF) {
 		printf("\n\nERROR: Stack pointer overflow\n");
 		errordump();
 		running = 0;
