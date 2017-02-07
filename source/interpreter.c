@@ -33,13 +33,13 @@ void interpreter(struct renderer *r)
 	switch (opcode & 0xF000) //(bitwise AND operation) trims the last 3 values of the opcode, (eg. case 0x1000 gets called with 0x1225)
 		{
 		case 0x0000:
-			switch (opcode)
+			switch (opcode & 0x000F)
 				{
-				case 0x00E0: //clear screen
+				case 0x0000: //clear screen
 					//printf("Clearing screen");
 					pc += 2;
 					break;
-				case 0x00EE: //return from subroutine
+				case 0x000E: //return from subroutine
 					sp--; //go one layer up
 					pc = stack[sp]; //go back to the original pc position, this will be the original subroutine call
 					pc += 2; //so we skip that
@@ -95,7 +95,7 @@ void interpreter(struct renderer *r)
 			switch (opcode & 0x000F)
 				{
 				case 0x0000: //8XY0, Assign, Vx=Vy	Sets VX to the value of VY.
-					V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 8];
+					V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4];
 					pc += 2;
 					break;
 
@@ -115,7 +115,7 @@ void interpreter(struct renderer *r)
 					break;
 
 				case 0x0004: //8XY4, Math, Vx += Vy	Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't.
-					if (((V[(opcode & 0x0F00) >> 8] + V[(opcode & 0x00F0) >> 4]) < 255))
+					if ((((int)V[(opcode & 0x0F00) >> 8] + (int)V[(opcode & 0x00F0) >> 4]) < 255))
 						V[0xF] = 0;
 					else
 						V[0xF] = 1;
@@ -124,8 +124,9 @@ void interpreter(struct renderer *r)
 					pc += 2;
 					break;
 
+				//TODO: check this
 				case 0x0005: //8XY5, Math, Vx -= Vy	VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
-					if ((V[(opcode & 0x0F00) >> 8] < V[(opcode & 0x00F0) >> 4])) //if VY < VX
+					if ((V[(opcode & 0x0F00) >> 8] <= V[(opcode & 0x00F0) >> 4])) //if VY <= VX
 						V[0xF] = 1;
 					else
 						V[0xF] = 0;
@@ -135,13 +136,13 @@ void interpreter(struct renderer *r)
 					break;
 
 				case 0x0006: //8XY6, BitOp, Vx >> 1	Shifts VX right by one. VF is set to the value of the least significant bit of VX before the shift.
-					V[0xF] = V[(opcode & 0x0F00) >> 8] & 0x1;
+					V[0xF] = V[(opcode & 0x0F00) >> 8] & 7; //TODO: check this
 					V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] >> 1;
 					pc += 2;
 					break;
 
 				case 0x0007: //8XY7, Math, Vx=Vy-Vx	Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
-					if (V[(opcode & 0x0F00) >> 8] < V[(opcode & 0x00F0) >> 4]) //if VY < VX
+					if (V[(opcode & 0x0F00) >> 8] <= V[(opcode & 0x00F0) >> 4]) //if VY <= VX
 						V[0xF] = 1;
 					else
 						V[0xF] = 0;
@@ -172,7 +173,7 @@ void interpreter(struct renderer *r)
 			break;
 
 		case 0xB000: //BNNN, Flow, PC=V0+NNN	Jumps to the address NNN plus V0.
-			pc = (opcode & 0x0FFF) + V[0x00];
+			pc = (opcode & 0x0FFF) + V[0];
 			//printf("Jumping to: %#04x", pc);
 			break;
 
@@ -184,6 +185,7 @@ void interpreter(struct renderer *r)
 		case 0xD000: //DXYN, Disp, draw(Vx,Vy,N)	Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a height of N pixels. Each row of 8 pixels is read as bit-coded starting from memory location I; I value doesn�t change after the execution of this instruction. As described above, VF is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that doesn�t happen
 			//printf("Draw sprite at (%d, %d) Height: %d", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4, opcode & 0x000F);
 			render_draw(r, V[opcode & 0x0F00 >> 8], V[opcode & 0x00f0 >> 8], &memory[I], opcode & 0x000F);
+			V[0xF] = 0;
 			pc += 2;
 			break;
 
@@ -213,25 +215,27 @@ void interpreter(struct renderer *r)
 					break;
 
 				case 0x0015: //FX15, Timer, delay_timer(Vx)	Sets the delay timer to VX.
-					delay_timer = (opcode & 0x0F00) >> 8;
+					delay_timer = V[(opcode & 0x0F00) >> 8];
 					pc += 2;
 					break;
 
 				case 0x0018: //FX18, Sound, sound_timer(Vx)	Sets the sound timer to VX.
-					sound_timer = (opcode & 0x0F00) >> 8;
+					sound_timer = V[(opcode & 0x0F00) >> 8];
 					pc += 2;
 					break;
 
 				case 0x001E: //FX1E, MEM, I +=Vx	Adds VX to I.
-					I += (opcode & 0x0F00) >> 8;
+					I += V[(opcode & 0x0F00) >> 8];
 					pc += 2;
 					break;
 
 				case 0x0029: //FX29, MEM, I=sprite_addr[Vx]	Sets I to the location of the sprite for the character in VX. Characters 0-F (in hexadecimal) are represented by a 4x5 font.
+					//TODO
 					pc += 2;
 					break;
 
 				case 0x0033: //just google it too long
+				//TODO
 					pc += 2;
 					break;
 

@@ -16,7 +16,7 @@
 
 #include "render.h"
 
-#define cyclesperframe 512
+#define cyclesperframe 2048
 
 unsigned short opcode; //currently processed opcode
 unsigned char memory[4096]; //wam size
@@ -35,8 +35,10 @@ unsigned char sound_timer;
 
 unsigned short I; //Adress register, 16 bit
 
-//This is a counter for how many cycles have passed since the last screen update
 unsigned int cyclesSLF; //cycles since last frame
+
+unsigned long t; //time variable
+unsigned long framesSLS; //frames since last second
 
 /*
 	INTERPRETER()
