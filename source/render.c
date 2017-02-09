@@ -80,7 +80,7 @@ void render_free(struct renderer *r)
 	SDL_Quit();
 	}
 
-int render_draw(struct renderer *r, char x, char y, char *sprite, char height)
+int render_draw(struct renderer *r, int x, int y, char *sprite, char height)
 	{
     int out = 0;
     // printf("Sprite at %d, %d\n", x, y);
@@ -109,7 +109,7 @@ int render_draw(struct renderer *r, char x, char y, char *sprite, char height)
 
 			if (r->screen[SCREEN_WIDTH * x + y])
                 {
-                printf("White %d, %d\n", x, y);
+                // printf("White %d, %d\n", x, y);
 				SDL_FillRect(surface, &rect, SDL_MapRGB(surface->format, 0xFF, 0xFF, 0xFF));
                 }
 			else
