@@ -3,6 +3,8 @@
 		-------------
 		Copyright (c) 2017 Timothy Kral, Vaughan Kitchen
 		Released under the MIT license (https://opensource.org/licenses/MIT)
+
+		Assembly taken from Cowgod's Chip-8 Technical Reference (http://devernay.free.fr/hacks/chip8/C8TECH10.HTM)
 */
 
 #include <stdio.h>
@@ -209,8 +211,7 @@ void interpreter(struct renderer *r)
 		/* DRW Vx, Vy, nibble */
 		case 0xD000: //DXYN, Disp, draw(Vx,Vy,N)	Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a height of N pixels. Each row of 8 pixels is read as bit-coded starting from memory location I; I value doesn�t change after the execution of this instruction. As described above, VF is set to 1 if any screen pixels are flipped from set to unset when the sprite is drawn, and to 0 if that doesn�t happen
 			//printf("Draw sprite at (%d, %d) Height: %d", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4, opcode & 0x000F);
-			render_draw(r, V[opcode & 0x0F00 >> 8], V[opcode & 0x00f0 >> 8], &memory[I], opcode & 0x000F);
-			V[0xF] = 0;
+			V[0xF] = render_draw(r, V[opcode & 0x0F00 >> 8], V[opcode & 0x00f0 >> 8], &memory[I], opcode & 0x000F);
 			pc += 2;
 			break;
 

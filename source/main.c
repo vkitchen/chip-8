@@ -84,8 +84,8 @@ int main(int argc, char **argv)
 	fread(memory + 0x200, 1, 4096 - 0x200, rom);
 	fclose(rom);
 
-	printf("\nCPU clock running at: %d Khz", (cyclesperframe * 60) / 1024);
-	printf("\033[7;0HFrame: 0");
+	// printf("\nCPU clock running at: %d Khz", (cyclesperframe * 60) / 1024);
+	// printf("\033[7;0HFrame: 0");
 
 	struct renderer *r = render_new();
 
@@ -109,16 +109,16 @@ int main(int argc, char **argv)
 				updatetimers(); //these timers should be called at 60hz
 				frame_count++;
 				cyclesSLF = 0; //reset cycles since last frame
-				printf("\033[7;0HFrame: %d", frame_count);
-				printf("\033[8;0HDraw calls per frame: %d", draw_calls);
+				// printf("\033[7;0HFrame: %d\n", frame_count);
+				// printf("\033[8;0HDraw calls per frame: %d\n", draw_calls);
 				draw_calls = 0;
 				//insert some function for updating screen here
 
-				//First clear the renderer
-				SDL_RenderClear(r->ren);
-
-				//Update the screen
-				SDL_RenderPresent(r->ren);
+				// //First clear the renderer
+				// SDL_RenderClear(r->ren);
+				//
+				// //Update the screen
+				// SDL_RenderPresent(r->ren);
 
 				if (t != (unsigned)time(NULL)) //if 1 second has passed
 				{
@@ -135,8 +135,7 @@ int main(int argc, char **argv)
 			}
 		}
 
-	render_free(r);
-
 	sleep(2); /* TODO remove, should programs stay open when execution stops? */
+	render_free(r);
 	return 0;
 	}

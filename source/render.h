@@ -20,11 +20,11 @@ struct renderer
 	{
 	SDL_Window *win;
 	SDL_Renderer *ren;
-	char screen[2048]; //!< We actually only need one bit per pixel but chars are easier to deal with.
+	char screen[2048]; //!< The screen represented in row order with one byte per pixel
 	};
 
 struct renderer *render_new();
-void render_draw(struct renderer *r, char x, char y, char *sprite, char length);
+int render_draw(struct renderer *r, char x, char y, char *sprite, char height);
 
 unsigned int frame_count; //total number of frames rendered
 unsigned int draw_calls; //total amount of objects begin rendered during that frame
