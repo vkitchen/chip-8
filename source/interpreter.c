@@ -47,7 +47,6 @@ void interpreter(struct renderer *r)
 
 				/* RET */
 				case 0x000E:
-					sp--;
 					pc = stack[sp--];
 					//printf("Finished subroutine, jumping to: %#04x", pc);
 					break;
