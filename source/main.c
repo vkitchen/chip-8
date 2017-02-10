@@ -29,6 +29,7 @@
 #include "fonts.h"
 #include "interpreter.h"
 #include "keys.h"
+#include "memory.h"
 #include "render.h"
 
 const char *usage = "\
@@ -40,14 +41,19 @@ int main(int argc, char **argv)
 	int running = 1;
 	int keypressed = 0;
 	int key = 0;
-	struct frame f;
+	struct frame *f;
 	unsigned char memory[2048];
+	for (int i = 0; i < 2048; i++)
+		memory[i] = 0;
+
+	f = interpreter_frame_new(&memory[0]);
+	f->fonts = memory_alloc(sizeof(short) * 16);
 
 	/* load fonts */
 	for (int i = 0; i < 16; i++)
 		{
 		memcpy(&memory[i*5], fonts[i], 5);
-		f.fonts[i] = i*5;
+		f->fonts[i] = i*5;
 		}
 
 	if (argc != 2)
@@ -62,20 +68,6 @@ int main(int argc, char **argv)
 		exit(1);
 		}
 
-	/* Initialise the first frame */
-	f.pc = 0x200;
-	f.memory = memory;
-	for (int i = 0; i < 16; i++)
-		{
-		f.V[i] = 0;
-		f.stack[i] = 0;
-		}
-	f.sp = 0;
-	f.I = 0;
-	f.renderer = render_new();
-	f.keypressed = 0;
-	f.key = 0;
-
 	//set random number seed
 	srand(time(0));
 
@@ -87,15 +79,20 @@ int main(int argc, char **argv)
 				running = 0;
 			if (Events.type == SDL_KEYDOWN && ISKEY(Events.key.keysym.sym))
 				{
-				f.keypressed = 1;
-				f.key = keys[Events.key.keysym.sym];
+				f->keypressed = 1;
+				f->key = keys[Events.key.keysym.sym];
+				// printf("key pressed %X\n", f.key);
 				}
 			}
 
 		//interpreter_print_frame(f);
-		f = interpreter_exec(f);
+		struct frame *f_new = interpreter_exec(f);
+		interpreter_frame_free(f);
+		f = f_new;
 		}
 
-	render_free(f.renderer);
+	render_free(f->renderer);
+	free(f->fonts);
+	interpreter_frame_free(f);
 	return 0;
 	}
