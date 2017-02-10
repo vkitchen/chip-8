@@ -26,6 +26,7 @@
 #endif
 
 #include "file.h"
+#include "fonts.h"
 #include "interpreter.h"
 #include "render.h"
 
@@ -38,6 +39,13 @@ int main(int argc, char **argv)
 	int running = 1;
 	struct frame f;
 	unsigned char memory[2048];
+
+	/* load fonts */
+	for (int i = 0; i < 16; i++)
+		{
+		memcpy(&memory[i*5], fonts[i], 5);
+		f.fonts[i] = i*5;
+		}
 
 	if (argc != 2)
 		{
@@ -72,6 +80,7 @@ int main(int argc, char **argv)
 			if (Events.type == SDL_QUIT)
 				running = 0;
 
+		//interpreter_print_frame(f);
 		f = interpreter_exec(f);
 		}
 

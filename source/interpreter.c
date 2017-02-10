@@ -13,8 +13,32 @@
 #include "render.h"
 
 /*
-	INTERPRETER()
-	-------------
+	INTERPRETER_PRINT_FRAME()
+	-------------------------
+*/
+void interpreter_print_frame(struct frame f)
+	{
+	puts("struct frame");
+	puts("    {");
+	printf("    pc: %#04x\n", f.pc);
+	printf("    opcode: 0x%02x%02x\n", f.memory[f.pc], f.memory[f.pc+1]);
+	printf("    V[]    ");
+	for (int i = 0; i < 16; i++)
+		printf(" %3d", f.V[i]);
+	puts("");
+	printf("    stack[]");
+	for (int i = 0; i < 16; i++)
+		printf(" %3d", f.stack[i]);
+	puts("");
+	printf("    sp: %#04x\n", f.sp);
+	printf("    I: %#04x\n", f.I);
+	puts("    }");
+	}
+
+
+/*
+	INTERPRETER_EXEC()
+	------------------
 */
 struct frame interpreter_exec(struct frame f)
 	{
@@ -37,7 +61,7 @@ struct frame interpreter_exec(struct frame f)
 
 				/* RET */
 				case 0x00EE:
-					f.pc = f.stack[f.sp--];
+					f.pc = f.stack[--f.sp];
 					break;
 				}
 			break;
@@ -49,8 +73,7 @@ struct frame interpreter_exec(struct frame f)
 
 		/* CALL addr */
 		case 0x2000:
-			f.stack[f.sp] = f.pc;
-			f.sp++;
+			f.stack[f.sp++] = f.pc;
 			f.pc = opcode & 0x0FFF;
 			break;
 
@@ -226,7 +249,7 @@ struct frame interpreter_exec(struct frame f)
 
 				/* LD F, Vx */
 				case 0x0029:
-					puts("WARNING: LD F, Vx not implemented");
+					f.I = f.fonts[f.V[x]];
 					break;
 
 				/* LD B, Vx */

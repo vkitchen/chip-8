@@ -16,6 +16,7 @@
 
 #include "render.h"
 
+/* TODO explicitely copy the arrays inside */
 struct frame
 	{
 	unsigned short pc;			//!< Program Counter
@@ -24,12 +25,19 @@ struct frame
 	unsigned char stack[16];
 	unsigned short sp;			//!< Stack pointer
 	unsigned short I;			//!< Address register
+	unsigned short fonts[16];	//!< Array of 0-F font sprites
 	struct renderer *renderer;	//!< Handles the screen drawing
 	};
 
 /*
-	INTERPRETER()
-	-------------
+	INTERPRETER_PRINT_FRAME()
+	-------------------------
+*/
+void interpreter_print_frame(struct frame f);
+
+/*
+	INTERPRETER_EXEC()
+	------------------
 */
 struct frame interpreter_exec(struct frame f);
 
