@@ -65,10 +65,10 @@ void interpreter_frame_free(struct frame *f)
 	}
 
 /*
-	INTERPRETER_PRINT_FRAME()
+	INTERPRETER_FRAME_PRINT()
 	-------------------------
 */
-void interpreter_print_frame(struct frame *f)
+void interpreter_frame_print(struct frame *f)
 	{
 	puts("struct frame");
 	puts("    {");
