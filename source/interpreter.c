@@ -208,13 +208,17 @@ struct frame interpreter_exec(struct frame f)
 			switch (opcode & 0x000F)
 				{
 				/* SKP Vx */
-				case 0x000E: //EX9E, KeyOp, if(key()==Vx)	Skips the next instruction if the key stored in VX is pressed. (Usually the next instruction is a jump to skip a code block)
-					puts("WARNING: SKP Vx not implemented");
+				case 0x000E:
+					if (f.keypressed && f.key == f.V[x])
+						f.pc += 2;
+					f.keypressed = 0;
 					break;
 
 				/* SKNP Vx */
-				case 0x0001: //EXA1, KeyOp, if(key()!=Vx)	Skips the next instruction if the key stored in VX isn't pressed. (Usually the next instruction is a jump to skip a code block)
-					puts("WARNING: SKNP Vx not implemented");
+				case 0x0001:
+					if (!(f.keypressed && f.key == f.V[x]))
+						f.pc += 2;
+					f.keypressed = 0;
 					break;
 				}
 			break;
@@ -229,7 +233,11 @@ struct frame interpreter_exec(struct frame f)
 
 				/* LD Vx, K */
 				case 0x000A: //FX0A, KeyOp, Vx = get_key()	A key press is awaited, and then stored in VX. (Blocking Operation. All instruction halted until next key event)
-					puts("WARNING: LD Vx, K not implemented");
+					if (f.keypressed)
+						f.V[x] = f.key;
+					else
+						f.pc -= 2;
+					f.keypressed = 0;
 					break;
 
 				/* LD DT, Vx */

@@ -13,6 +13,9 @@
 	@copyright 2017 Timothy Kral, Vaughan Kitchen
 */
 
+#ifndef FONTS_H_
+#define FONTS_H_
+
 const unsigned char fonts[16][5] =
 	{
 	{0xF0, 0x90, 0x90, 0x90, 0xF0},
@@ -32,3 +35,5 @@ const unsigned char fonts[16][5] =
 	{0xF0, 0x80, 0xF0, 0x80, 0xF0},
 	{0xF0, 0x80, 0xF0, 0x80, 0x80}
 	};
+
+#endif

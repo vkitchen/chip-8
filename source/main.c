@@ -28,6 +28,7 @@
 #include "file.h"
 #include "fonts.h"
 #include "interpreter.h"
+#include "keys.h"
 #include "render.h"
 
 const char *usage = "\
@@ -37,6 +38,8 @@ int main(int argc, char **argv)
 	{
 	SDL_Event Events;
 	int running = 1;
+	int keypressed = 0;
+	int key = 0;
 	struct frame f;
 	unsigned char memory[2048];
 
@@ -70,6 +73,8 @@ int main(int argc, char **argv)
 	f.sp = 0;
 	f.I = 0;
 	f.renderer = render_new();
+	f.keypressed = 0;
+	f.key = 0;
 
 	//set random number seed
 	srand(time(0));
@@ -77,8 +82,15 @@ int main(int argc, char **argv)
 	while (running)
 		{
 		while (SDL_PollEvent(&Events))
+			{
 			if (Events.type == SDL_QUIT)
 				running = 0;
+			if (Events.type == SDL_KEYDOWN && ISKEY(Events.key.keysym.sym))
+				{
+				f.keypressed = 1;
+				f.key = keys[Events.key.keysym.sym];
+				}
+			}
 
 		//interpreter_print_frame(f);
 		f = interpreter_exec(f);

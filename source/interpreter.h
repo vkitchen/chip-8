@@ -27,6 +27,8 @@ struct frame
 	unsigned short I;			//!< Address register
 	unsigned short fonts[16];	//!< Array of 0-F font sprites
 	struct renderer *renderer;	//!< Handles the screen drawing
+	int keypressed;				//!< Boolean indicating whether a key has been pressed
+	unsigned char key;			//!< The key value according to the keyboard layout
 	};
 
 /*
