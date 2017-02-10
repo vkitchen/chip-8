@@ -32,3 +32,22 @@ either `rm -R build` or `git clean -fdx`
 ### To generate docs
 
 In project root run `doxygen`
+
+
+### Playing Games
+
+Currently the CHIP-8 keyboard is aligned with the left side of a Qwerty layout. This can be modified in keys.h
+
+The CHIP-8 keyboard is layed out as so
+
+	1 2 3 C
+	4 5 6 D
+	7 8 9 E
+	A 0 B F
+
+Which corresponds to
+
+	1 2 3 4
+	q w e r
+	a s d f
+	z x c v
