@@ -2,7 +2,7 @@
 
 ## Build Instructions for Linux
 
-Dependencies are CMake and Doxygen
+Dependencies are CMake, Doxygen and SDL
 
 ### To build (Linux)
 
