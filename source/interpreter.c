@@ -25,20 +25,19 @@ struct frame interpreter_exec(struct frame f)
 
 	f.pc += 2;
 
-	//credit to wikipedia for opcode descriptions
-	switch (opcode & 0xF000) //(bitwise AND operation) trims the last 3 values of the opcode, (eg. case 0x1000 gets called with 0x1225)
+	switch (opcode & 0xF000)
 		{
 		case 0x0000:
-			switch (opcode & 0x000F)
+			switch (opcode)
 				{
 				/* CLS */
-				case 0x0000:
+				case 0x00E0:
+					render_clear(f.renderer);
 					break;
 
 				/* RET */
-				case 0x000E:
+				case 0x00EE:
 					f.pc = f.stack[f.sp--];
-					//printf("Finished subroutine, jumping to: %#04x", pc);
 					break;
 				}
 			break;
@@ -46,7 +45,6 @@ struct frame interpreter_exec(struct frame f)
 		/* JP addr */
 		case 0x1000:
 			f.pc = opcode & 0x0FFF;
-			//printf("Jumping to: %#04x", pc);
 			break;
 
 		/* CALL addr */
@@ -54,7 +52,6 @@ struct frame interpreter_exec(struct frame f)
 			f.stack[f.sp] = f.pc;
 			f.sp++;
 			f.pc = opcode & 0x0FFF;
-			//printf("Calling subroutine at: %#04x", opcode & 0x0FFF);
 			break;
 
 		/* SE Vx, byte */
@@ -109,7 +106,8 @@ struct frame interpreter_exec(struct frame f)
 					break;
 
 				/* ADD Vx, Vy */
-				case 0x0004: //8XY4, Math, Vx += Vy	Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't.
+				/* VF is set to 1 if there's a carry. 0 otherwise */
+				case 0x0004:
 					if ((((int)f.V[x] + (int)f.V[y]) < 255))
 						f.V[0xF] = 0;
 					else
@@ -120,7 +118,8 @@ struct frame interpreter_exec(struct frame f)
 
 				//TODO: check this
 				/* SUB Vx, Vy */
-				case 0x0005: //8XY5, Math, Vx -= Vy	VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
+				/* VF is set to 0 when there's a borrow. 1 otherwise */
+				case 0x0005:
 					if ((f.V[x] <= f.V[y])) //if VY <= VX
 						f.V[0xF] = 1;
 					else
@@ -187,10 +186,12 @@ struct frame interpreter_exec(struct frame f)
 				{
 				/* SKP Vx */
 				case 0x000E: //EX9E, KeyOp, if(key()==Vx)	Skips the next instruction if the key stored in VX is pressed. (Usually the next instruction is a jump to skip a code block)
+					puts("WARNING: SKP Vx not implemented");
 					break;
 
 				/* SKNP Vx */
 				case 0x0001: //EXA1, KeyOp, if(key()!=Vx)	Skips the next instruction if the key stored in VX isn't pressed. (Usually the next instruction is a jump to skip a code block)
+					puts("WARNING: SKNP Vx not implemented");
 					break;
 				}
 			break;
@@ -200,18 +201,22 @@ struct frame interpreter_exec(struct frame f)
 				{
 				/* LD Vx, DT */
 				case 0x0007: //FX07, Timer, Vx = get_delay()	Sets VX to the value of the delay timer.
+					puts("WARNING: LD Vx, DT not implemented");
 					break;
 
 				/* LD Vx, K */
 				case 0x000A: //FX0A, KeyOp, Vx = get_key()	A key press is awaited, and then stored in VX. (Blocking Operation. All instruction halted until next key event)
+					puts("WARNING: LD Vx, K not implemented");
 					break;
 
 				/* LD DT, Vx */
 				case 0x0015: //FX15, Timer, delay_timer(Vx)	Sets the delay timer to VX.
+					puts("WARNING: LD DT, Vx not implemented");
 					break;
 
 				/* LD ST, Vx */
 				case 0x0018: //FX18, Sound, sound_timer(Vx)	Sets the sound timer to VX.
+					puts("WARNING: LD ST, Vx not implemented");
 					break;
 
 				/* ADD I, Vx */
@@ -220,13 +225,14 @@ struct frame interpreter_exec(struct frame f)
 					break;
 
 				/* LD F, Vx */
-				case 0x0029: //FX29, MEM, I=sprite_addr[Vx]	Sets I to the location of the sprite for the character in VX. Characters 0-F (in hexadecimal) are represented by a 4x5 font.
-					//TODO
+				case 0x0029:
+					puts("WARNING: LD F, Vx not implemented");
 					break;
 
 				/* LD B, Vx */
-				case 0x0033: //just google it too long
-				//TODO
+				/* Store BCD representation of Vx in memory locations I, I+1, and I+2. */
+				case 0x0033:
+					puts("WARNING: LD B, Vx not implemented");
 					break;
 
 				/* LD [I], Vx */

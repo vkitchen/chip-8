@@ -30,6 +30,12 @@ struct renderer
 struct renderer *render_new();
 
 /*
+	RENDER_CLEAR()
+	--------------
+*/
+void render_clear(struct renderer *r);
+
+/*
 	RENDER_DRAW()
 	-------------
 */

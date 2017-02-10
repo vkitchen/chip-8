@@ -38,6 +38,10 @@ const int PIXEL_HEIGHT = 10;
     const Uint32 amask = 0xff000000;
 #endif
 
+/*
+	RENDER_NEW()
+	------------
+*/
 struct renderer *render_new()
 	{
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -73,6 +77,10 @@ struct renderer *render_new()
 	return r;
 	}
 
+/*
+	RENDER_FREE()
+	-------------
+*/
 void render_free(struct renderer *r)
 	{
 	SDL_DestroyRenderer(r->ren);
@@ -80,6 +88,54 @@ void render_free(struct renderer *r)
 	SDL_Quit();
 	}
 
+/*
+	RENDER_CLEAR()
+	--------------
+*/
+void render_clear(struct renderer *r)
+    {
+    for (int i = 0; i < 2048; i++)
+        r->screen[i] = 0;
+
+    /* Render the screen */
+    SDL_Surface *surface = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, 32,
+                                   rmask, gmask, bmask, amask);
+
+	for (int x = 0; x < SCREEN_WIDTH; x++)
+		for (int y = 0; y < SCREEN_HEIGHT; y++)
+			{
+			SDL_Rect rect = {x, y, PIXEL_WIDTH, PIXEL_HEIGHT};
+
+			SDL_FillRect(surface, &rect, SDL_MapRGB(surface->format, 0x00, 0x00, 0x00));
+			}
+
+	SDL_Texture *tex = SDL_CreateTextureFromSurface(r->ren, surface);
+
+	SDL_FreeSurface(surface);
+
+	if (tex == NULL)
+		{
+		SDL_DestroyRenderer(r->ren);
+		SDL_DestroyWindow(r->win);
+		printf("SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
+		SDL_Quit();
+		return;
+		}
+
+	//First clear the renderer
+	SDL_RenderClear(r->ren);
+	//Draw the texture
+	SDL_RenderCopy(r->ren, tex, NULL, NULL);
+	//Update the screen
+	SDL_RenderPresent(r->ren);
+
+	SDL_DestroyTexture(tex);
+    }
+
+/*
+	RENDER_DRAW()
+	-------------
+*/
 int render_draw(struct renderer *r, int x, int y, char *sprite, char height)
 	{
     int out = 0;
