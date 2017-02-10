@@ -23,10 +23,22 @@ struct renderer
 	char screen[2048]; //!< The screen represented in row order with one byte per pixel
 	};
 
+/*
+	RENDER_NEW()
+	------------
+*/
 struct renderer *render_new();
+
+/*
+	RENDER_DRAW()
+	-------------
+*/
 int render_draw(struct renderer *r, int x, int y, char *sprite, char height);
 
-unsigned int frame_count; //total number of frames rendered
-unsigned int draw_calls; //total amount of objects begin rendered during that frame
+/*
+	RENDER_FREE()
+	-------------
+*/
+void render_free(struct renderer *r);
 
 #endif

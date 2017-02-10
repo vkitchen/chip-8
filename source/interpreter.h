@@ -16,34 +16,21 @@
 
 #include "render.h"
 
-#define cyclesperframe 2048
-
-unsigned short opcode; //currently processed opcode
-unsigned char memory[4096]; //wam size
-unsigned short pc; //program counter
-unsigned short pc2; //previous program counter, used to check if the program begins looping
-unsigned int OpsProcessed; //counts how many opcodes have been processed
-unsigned char V[0x10]; //All 16 registers, V0 to VF, 8 bit
-unsigned char stack[0x10]; //16 stack, used for subroutines, capable of 16 nested subroutines
-unsigned short sp; //stack pointer, or how many layers deep in a subroutine
-
-unsigned int running;
-
-//both timers decrement by 1 at 60hz when greater than 0
-unsigned char delay_timer;
-unsigned char sound_timer;
-
-unsigned short I; //Adress register, 16 bit
-
-unsigned int cyclesSLF; //cycles since last frame
-
-unsigned long t; //time variable
-unsigned long framesSLS; //frames since last second
+struct frame
+	{
+	unsigned short pc;			//!< Program Counter
+	unsigned char *memory;
+	unsigned char V[16];		//!< Registers, V0 to VF
+	unsigned char stack[16];
+	unsigned short sp;			//!< Stack pointer
+	unsigned short I;			//!< Address register
+	struct renderer *renderer;	//!< Handles the screen drawing
+	};
 
 /*
 	INTERPRETER()
 	-------------
 */
-void interpreter(struct renderer *r);
+struct frame interpreter_exec(struct frame f);
 
 #endif
