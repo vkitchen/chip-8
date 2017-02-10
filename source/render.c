@@ -46,7 +46,7 @@ struct renderer *render_new()
 		return NULL;
 		}
 
-	SDL_Window *win = SDL_CreateWindow("Hello World!", 100, 100, SCREEN_WIDTH * PIXEL_WIDTH, SCREEN_HEIGHT * PIXEL_HEIGHT, SDL_WINDOW_SHOWN);
+	SDL_Window *win = SDL_CreateWindow("Hello World!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH * PIXEL_WIDTH, SCREEN_HEIGHT * PIXEL_HEIGHT, SDL_WINDOW_SHOWN);
 	if (win == NULL)
 		{
 		printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
@@ -102,12 +102,12 @@ int render_draw(struct renderer *r, int x, int y, char *sprite, char height)
     SDL_Surface *surface = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, 32,
                                    rmask, gmask, bmask, amask);
 
-	for (int y = 0; y < SCREEN_WIDTH; y++)
-		for (int x = 0; x < SCREEN_HEIGHT; x++)
+	for (int x = 0; x < SCREEN_WIDTH; x++)
+		for (int y = 0; y < SCREEN_HEIGHT; y++)
 			{
 			SDL_Rect rect = {x, y, PIXEL_WIDTH, PIXEL_HEIGHT};
 
-			if (r->screen[SCREEN_WIDTH * x + y])
+			if (r->screen[SCREEN_WIDTH * y + x])
                 {
                 // printf("White %d, %d\n", x, y);
 				SDL_FillRect(surface, &rect, SDL_MapRGB(surface->format, 0xFF, 0xFF, 0xFF));
