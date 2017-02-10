@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "render.h"
+#include <SDL2/SDL.h>
 #include <time.h>
 
 #ifdef WIN32
@@ -26,6 +26,7 @@
 #endif
 
 #include "interpreter.h"
+#include "render.h"
 
 const char *usage = "\
 chip-8 [FILE]\n";
@@ -54,6 +55,8 @@ void errorcheck() {
 int main(int argc, char **argv)
 	{
 	FILE *rom;
+	SDL_Event Events;
+
 	int file_size;
 	running = 1;
 
@@ -91,6 +94,11 @@ int main(int argc, char **argv)
 
 	while (running)
 		{
+		while (SDL_PollEvent(&Events))
+			if (Events.type == SDL_QUIT)
+				running = 0;
+
+
 		//Get and decode opcode
 		opcode = memory[pc] << 8 | memory[pc + 1];
 
@@ -135,7 +143,6 @@ int main(int argc, char **argv)
 			}
 		}
 
-	sleep(2); /* TODO remove, should programs stay open when execution stops? */
 	render_free(r);
 	return 0;
 	}
