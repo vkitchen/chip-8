@@ -15,6 +15,7 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CONFIGURATION_TYPES Debug)
 
 set(CHIP8_FILES
+	source/file.c
 	source/interpreter.c
 	source/memory.c
 	source/render.c

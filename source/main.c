@@ -31,33 +31,10 @@
 const char *usage = "\
 chip-8 [FILE]\n";
 
-void errordump() {
-	printf("\n\033[11;0HPC: %#04x OP: %04X SP: %d DT: %d", pc, opcode, sp, delay_timer);
-	printf("\n\nOpcodes processed: %d\n", OpsProcessed);
-
-}
-
-void errorcheck() {
-	if (pc == pc2)
-	{
-		printf("\033[10;0HERROR: Pointer counter frozen\n");
-		errordump();
-		running = 0;
-	}
-
-	if (sp > 0xF) {
-		printf("\033[10;0HERROR: Stack pointer overflow\n");
-		errordump();
-		running = 0;
-	}
-}
-
 int main(int argc, char **argv)
 	{
-	FILE *rom;
 	SDL_Event Events;
 
-	int file_size;
 	running = 1;
 
 	if (argc != 2)
@@ -66,29 +43,16 @@ int main(int argc, char **argv)
 		exit(0);
 		}
 
-	//open the rom we're working with
-	rom = fopen(argv[1], "rb");
-
-	//get the size of the rom
-	file_size = ftell(rom);
-
-	//clear the screen
-	printf("\033[2J\033[1;1H"); //TODO: only works on linux
-
-	//print name of the rom (useless)
-	printf("\nFile: %s\n", argv[1]);
+	if (!file_slurp_buffer_c(argv[1], &memory[0x200], 4096 - 0x200))
+		{
+		printf("ERROR: File \"%s\" could not be read\n", argv[1]);
+		exit(1);
+		}
 
 	pc = 0x200; //apparently this is where the program counter should start
 
 	//set random number seed
 	srand(time(0));
-
-	//dump the rom data into the memory array, then close the file
-	fread(memory + 0x200, 1, 4096 - 0x200, rom);
-	fclose(rom);
-
-	// printf("\nCPU clock running at: %d Khz", (cyclesperframe * 60) / 1024);
-	// printf("\033[7;0HFrame: 0");
 
 	struct renderer *r = render_new();
 
@@ -108,7 +72,6 @@ int main(int argc, char **argv)
 
 		cyclesSLF++;
 		OpsProcessed++;
-		errorcheck();
 
 		//update screen
 		if (cyclesSLF >= cyclesperframe)
