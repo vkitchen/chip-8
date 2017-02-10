@@ -22,7 +22,7 @@ struct frame
 	unsigned short pc;			//!< Program Counter
 	unsigned char *memory;
 	unsigned char *V;			//!< Registers, V0 to VF
-	unsigned char *stack;		//!< Stack, 16 levels
+	unsigned short *stack;		//!< Stack, 16 levels
 	unsigned short sp;			//!< Stack pointer
 	unsigned short I;			//!< Address register
 	unsigned short *fonts;		//!< Array of 0-F font sprites
@@ -42,6 +42,15 @@ struct frame *interpreter_frame_new(char *memory);
 	-----------------------
 */
 struct frame *interpreter_frame_dup(struct frame *a);
+
+/*
+	INTERPREFER_FRAME_CMP()
+	-----------------------
+*/
+/*!
+	@brief Compares two frames and returns 1 if they're the same. 0 otherwise
+*/
+int interpreter_frame_cmp(struct frame *a, struct frame *b);
 
 /*
 	INTERPRETER_FRAME_FREE()

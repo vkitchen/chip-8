@@ -85,8 +85,10 @@ int main(int argc, char **argv)
 				}
 			}
 
-		interpreter_frame_print(f);
 		struct frame *f_new = interpreter_exec(f);
+		if (!interpreter_frame_cmp(f, f_new))
+			//interpreter_frame_print(f);
+
 		interpreter_frame_free(f);
 		f = f_new;
 		}
